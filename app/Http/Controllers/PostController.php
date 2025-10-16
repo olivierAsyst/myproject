@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostFilterRequest;
 use App\Models\Post;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Contracts\View\View;
@@ -10,6 +11,11 @@ use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
+
+    public function create(): View
+    {
+        return view('blog.create');
+    }
     public function index(): View
     {
         // for ($i=0; $i < 11; $i++) {
@@ -39,12 +45,14 @@ class PostController extends Controller
         //     'slug' => "mon-tout-dernier-article-ajoute",
         //     'content' => "Les contenus de mon tout dernier article ajouté"
         // ]);
-        $validator = Validator::make([
-            'title' => 'ss'
-        ],[
-            'title' => 'required|min:5'
-        ]);
-        dd($validator->errors());
+
+        // $validator = Validator::make([
+        //     'title' => 'ss'
+        // ],[
+        //     'title' => 'required|min:5'
+        // ]);
+        // dd($validator->errors());
+        // dd($postFilterRequest->validated());
 
         $post = Post::paginate(4, ['id', 'title', 'content', 'slug']);
         return view('blog.index',[
@@ -52,9 +60,10 @@ class PostController extends Controller
         ]);
     }
 
-    public function show(string $slug, string $id): RedirectResponse | View
+    public function show(string $slug, Post $post): RedirectResponse | View
     {
-        $post = Post::findOrFail($id);
+        //dd($post);
+        //$post = Post::findOrFail($post);
         if($post->slug != $slug){
             return to_route('blog.show', [
                 'slug' => $post->slug,
